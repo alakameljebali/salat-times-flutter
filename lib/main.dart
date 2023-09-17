@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(const PrayerTimesApp());
@@ -11,12 +12,16 @@ class PrayerTimesApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     return Directionality(
       textDirection: TextDirection.rtl, // Set the text direction to RTL
       child: MaterialApp(
         title: 'أوقات الصلاة',
         theme: ThemeData(
           primarySwatch: Colors.blue,
+          textTheme: GoogleFonts.latoTextTheme(textTheme).copyWith(
+            bodyMedium: GoogleFonts.readexPro(textStyle: textTheme.bodyMedium),
+          ),
         ),
         home: const PrayerTimesWidget(), // Set your PrayerTimesWidget as the home screen.
       ),
@@ -123,14 +128,14 @@ class PrayerCard extends StatelessWidget {
               Center(
                 child: Text(
                   title,
-                  style: const TextStyle(fontSize: 52.0, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 56.0, fontWeight: FontWeight.bold),
                 ),
               ),
-              const SizedBox(height: 8.0),
+              const SizedBox(height: 12.0),
               Center(
                 child: Text(
                   time,
-                  style: const TextStyle(fontSize: 40.0),
+                  style: const TextStyle(fontSize: 45.0),
                 ),
               ),
             ],
