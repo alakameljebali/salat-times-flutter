@@ -14,23 +14,33 @@ class PrayerTimesApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return Directionality(
-      textDirection: TextDirection.rtl, // Set the text direction to RTL
-      child: MaterialApp(
-        title: 'أوقات الصلاة',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          textTheme: GoogleFonts.latoTextTheme(textTheme).copyWith(
-            bodyMedium: GoogleFonts.readexPro(textStyle: textTheme.bodyMedium),
-          ),
-        ),
-        home: const PrayerTimesWidget(), // Set your PrayerTimesWidget as the home screen.
+      textDirection: TextDirection.rtl,
+      child: Builder(
+        builder: (context) {
+          final screenWidth = MediaQuery.of(context).size.width;
+
+          return MaterialApp(
+            title: 'أوقات الصلاة',
+            theme: ThemeData(
+              primarySwatch: Colors.blue,
+              textTheme: GoogleFonts.latoTextTheme(textTheme).copyWith(
+                bodyMedium:
+                    GoogleFonts.readexPro(textStyle: textTheme.bodyMedium),
+              ),
+            ),
+            home: PrayerTimesWidget(screenWidth: screenWidth),
+          );
+        },
       ),
     );
   }
 }
 
 class PrayerTimesWidget extends StatefulWidget {
-  const PrayerTimesWidget({super.key});
+  final double screenWidth;
+
+  const PrayerTimesWidget({Key? key, required this.screenWidth})
+      : super(key: key);
 
   @override
   _PrayerTimesWidgetState createState() => _PrayerTimesWidgetState();
@@ -78,6 +88,80 @@ class _PrayerTimesWidgetState extends State<PrayerTimesWidget> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.screenWidth <= 600) {
+      // For smaller screens, use the small screen view
+      return PrayerTimesSmallView(
+        fajr: fajr,
+        dhuhr: dhuhr,
+        asr: asr,
+        maghrib: maghrib,
+        isha: isha,
+      );
+    } else {
+      // For larger screens, use the tablet view
+      return PrayerTimesTabletView(
+        fajr: fajr,
+        dhuhr: dhuhr,
+        asr: asr,
+        maghrib: maghrib,
+        isha: isha,
+      );
+    }
+  }
+}
+
+class PrayerTimesSmallView extends StatelessWidget {
+  final String fajr;
+  final String dhuhr;
+  final String asr;
+  final String maghrib;
+  final String isha;
+
+  const PrayerTimesSmallView({super.key, 
+    required this.fajr,
+    required this.dhuhr,
+    required this.asr,
+    required this.maghrib,
+    required this.isha,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("أوقات الصلاة"), // Prayer Times in Arabic
+        centerTitle: true,
+      ),
+      body: Column(
+        children: [
+          PrayerCard("الصبح", fajr),
+          PrayerCard("الظهر", dhuhr),
+          PrayerCard("العصر", asr),
+          PrayerCard("المغرب", maghrib),
+          PrayerCard("العشاء", isha),
+        ],
+      ),
+    );
+  }
+}
+
+class PrayerTimesTabletView extends StatelessWidget {
+  final String fajr;
+  final String dhuhr;
+  final String asr;
+  final String maghrib;
+  final String isha;
+
+  const PrayerTimesTabletView({super.key, 
+    required this.fajr,
+    required this.dhuhr,
+    required this.asr,
+    required this.maghrib,
+    required this.isha,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("أوقات الصلاة"), // Prayer Times in Arabic
@@ -89,9 +173,9 @@ class _PrayerTimesWidgetState extends State<PrayerTimesWidget> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                PrayerCard("العصر", asr),
-                PrayerCard("الظهر", dhuhr),
-                PrayerCard("الصبح", fajr),
+                Flexible(child: PrayerCard("العصر", asr)),
+                Flexible(child: PrayerCard("الظهر", dhuhr)),
+                Flexible(child: PrayerCard("الصبح", fajr)),
               ],
             ),
           ),
@@ -99,8 +183,8 @@ class _PrayerTimesWidgetState extends State<PrayerTimesWidget> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                PrayerCard("العشاء", isha),
-                PrayerCard("المغرب", maghrib),
+                Flexible(child: PrayerCard("العشاء", isha)),
+                Flexible(child: PrayerCard("المغرب", maghrib)),
               ],
             ),
           ),
@@ -118,28 +202,26 @@ class PrayerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Center(
-                child: Text(
-                  title,
-                  style: const TextStyle(fontSize: 56.0, fontWeight: FontWeight.bold),
-                ),
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(
+              child: Text(
+                title,
+                style: const TextStyle(fontSize: 36.0, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 12.0),
-              Center(
-                child: Text(
-                  time,
-                  style: const TextStyle(fontSize: 45.0),
-                ),
+            ),
+            const SizedBox(height: 12.0),
+            Center(
+              child: Text(
+                time,
+                style: const TextStyle(fontSize: 30.0),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
